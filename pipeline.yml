@@ -1,5 +1,5 @@
 resources:
-  - name: decibal-web
+  - name: git-demo-react-repo
     type: git
     source:
       uri: git@github.com:Tribalscale/demo-react-repo
