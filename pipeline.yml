@@ -11,9 +11,9 @@ jobs:
     plan:
       - get: git-demo-react-repo
         trigger: true
+      - task: test
         input_mapping:
           demo-react-repo: git-demo-react-repo
-      - task: test
-        file: demo-react-repo/test.yml
+        file: git-demo-react-repo/test.yml
         params:
           NODE_ENV: test
