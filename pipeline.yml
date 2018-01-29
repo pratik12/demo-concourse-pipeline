@@ -5,3 +5,15 @@ resources:
       uri: git@github.com:Tribalscale/demo-react-repo
       branch: develop
       private_key: ((github-private-key))
+
+jobs:
+  - name: test-demo-react
+    plan:
+      - get: git-demo-react-repo
+        trigger: true
+        input_mapping:
+          demo-react-repo: git-demo-react-repo
+      - task: test
+        file: demo-react-repo/test.yml
+        params:
+          NODE_ENV: test
