@@ -1,0 +1,7 @@
+resources:
+  - name: decibal-web
+    type: git
+    source:
+      uri: git@github.com:Tribalscale/demo-react-repo
+      branch: develop
+      private_key: ((github-private-key))
