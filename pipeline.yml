@@ -1,3 +1,9 @@
+resource_types:
+  - name: pull-request
+    type: docker-image
+    source:
+      repository: jtarchie/pr
+
 resources:
   - name: git-demo-react-repo
     type: git
@@ -21,6 +27,15 @@ resources:
       password: ((cf-password))
       organization: ((cf-org))
       space: ((cf-acceptance-space))
+  - name: git-pr-demo-react
+    type: pull-request
+    source:
+      access_token: ((github-access-token))
+      private_key: ((github-private-key))
+      uri: git@github.com:TribalScale/demo-react-repo
+      repo: TribalScale/demo-react-repo
+      base: develop
+
 
 jobs:
   - name: test-demo-react
@@ -70,3 +85,23 @@ jobs:
           manifest: build/manifest_dev.yml
           path: build
           current_app_name: acceptance-demo-react
+  - name: test-web-pr
+    plan:
+      - get: git-pr-demo-react
+        trigger: true
+      - task: test
+        input_mapping:
+          demo-react-repo: git-pr-demo-react
+        file: git-pr-demo-react/test.yml
+        params:
+          NODE_ENV: test
+        on_success:
+          put: git-pr-demo-react
+          params:
+            path: git-pr-demo-react
+            status: success
+        on_failure:
+          put: git-pr-demo-react
+          params:
+            path: git-pr-demo-react
+            status: failure
