@@ -13,6 +13,14 @@ resources:
       password: ((cf-password))
       organization: ((cf-org))
       space: ((cf-dev-space))
+  - name: cf-acceptance
+    type: cf
+    source:
+      api: https://api.run.pivotal.io
+      username: ((cf-username))
+      password: ((cf-password))
+      organization: ((cf-org))
+      space: ((cf-acceptance-space))
 
 jobs:
   - name: test-demo-react
@@ -44,3 +52,21 @@ jobs:
           manifest: build/manifest_dev.yml
           path: build
           current_app_name: demo-react
+
+  - name: deploy-cf-acceptance-demo-react
+    plan:
+      - get: git-demo-react-repo
+        passed: [test-demo-react, deploy-cf-demo-react]
+      - task: build
+        input_mapping:
+          demo-react-repo: git-demo-react-repo
+        file: git-demo-react-repo/build.yml
+        params:
+          MANIFEST: manifest_dev.yml
+          PUBLIC_URL: /
+          REACT_APP_GA: UA-32916794-4
+      - put: cf-acceptance
+        params:
+          manifest: build/manifest_dev.yml
+          path: build
+          current_app_name: acceptance-demo-react
