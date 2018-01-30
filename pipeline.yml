@@ -5,6 +5,14 @@ resources:
       uri: git@github.com:Tribalscale/demo-react-repo
       branch: develop
       private_key: ((github-private-key))
+  - name: cf-dev
+    type: cf
+    source:
+      api: https://api.run.pivotal.io
+      username: ((cf-username))
+      password: ((cf-password))
+      organization: ((cf-org))
+      space: ((cf-dev-space))
 
 jobs:
   - name: test-demo-react
@@ -17,3 +25,22 @@ jobs:
         file: git-demo-react-repo/test.yml
         params:
           NODE_ENV: test
+
+  - name: deploy-cf-demo-react
+    plan:
+      - get: git-demo-react-repo
+        trigger: true
+        passed: [test-demo-react]
+      - task: build
+        input_mapping:
+          demo-react-repo: git-demo-react-repo
+        file: git-demo-react-repo/build.yml
+        params:
+          MANIFEST: manifest_dev.yml
+          PUBLIC_URL: /
+          REACT_APP_GA: UA-32916794-3
+      - put: cf-dev
+        params:
+          manifest: build/manifest_dev.yml
+          path: build
+          current_app_name: demo-react
