@@ -7,7 +7,7 @@ resources:
       private_key: ((github-private-key))
 
 jobs:
-  - name: test-demo-react
+  - name: test-demo-react-developer
     plan:
       - get: demo-concourse
         trigger: true
