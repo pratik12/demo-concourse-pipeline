@@ -1,0 +1,19 @@
+resources:
+  - name: demo-concourse
+    type: git
+    source:
+      uri: git@github.com:pratik12/demo-concourse-pipeline
+      branch: test-developer
+      private_key: ((github-private-key))
+
+jobs:
+  - name: test-demo-react
+    plan:
+      - get: demo-concourse
+        trigger: true
+      - task: test
+        input_mapping:
+          demo-react-repo: demo-concourse
+        file: demo-concourse/test.yml
+        params:
+          NODE_ENV: test
